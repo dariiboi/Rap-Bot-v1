@@ -38,8 +38,8 @@ def generateTrigram(words):
 def generateReverseTrigram(words):
     if len(words) < 3: #unless the line has less than 3 words tho
         return
-    for i in reversed(range(len(words) - 2)): 
-        yield (words[i], words[i-1], words[i-2])
+    for i in reversed(range(len(words) -2)): 
+        yield (words[i-2], words[i-1], words[i])
  
  #add counts to words after tuples
 def count(line):
@@ -73,8 +73,8 @@ def revCount(line):
 	#run the trigram maker which returns a set of 3 words
 	for word3, word2, word1 in generateReverseTrigram(words):
 		#the first 2 words in the trigram become the tuple key
-		#word1,word2,word3 are actually the values of the dictionary?
 		key = (word3, word2)
+		print (key)
 		if key in reverseDict:
 			if word1 in reverseDict[key]:
 				#add a count to the amount of times you've seen a word after a tuple
@@ -160,7 +160,7 @@ for filename in os.listdir(path):
 			newline = '$ ' + line + ' #'
 			count(newline) #pass clean line to the counting function
 			revCount(newline)
-			count(newline)
+			
 	fileCount += 1
 	#when building, count every 100 files
 	if (fileCount % 100 == 0):
