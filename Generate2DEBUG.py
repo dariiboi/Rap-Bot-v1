@@ -88,7 +88,7 @@ for i in range(maxlines):
 
 		prevTuple = (prevTuple[1],newWord)
 		output.append(newWord)
-		#pprint.pprint(debugProbs)	#PRINT A DEBUG. Show the second, third, forth, etc. most likely words to follow. 
+		pprint.pprint(debugProbs)	#PRINT A DEBUG. Show the second, third, forth, etc. most likely words to follow. 
 		if newWord == '#' :		
 			break
 	output.pop()
