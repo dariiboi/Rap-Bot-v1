@@ -36,10 +36,10 @@ def generateTrigram(words):
         yield (words[i], words[i+1], words[i+2])
 
 def generateReverseTrigram(words):
-    if len(words) < 3: #unless the line has less than 3 words tho
-        return
-    for i in reversed(range(len(words) -2)): 
-        yield (words[i-2], words[i-1], words[i])
+	if len(words) < 3: #unless the line has less than 3 words tho
+ 		return
+	for i in reversed(range(2,len(words))):
+		yield (words[i-2], words[i-1], words[i])
  
  #add counts to words after tuples
 def count(line):
@@ -71,21 +71,23 @@ def revCount(line):
 	words = line.split(' ')
 	wordCount += len(words)
 	#run the trigram maker which returns a set of 3 words
+	print (line)
 	for word3, word2, word1 in generateReverseTrigram(words):
+		print(word3 +" "+ word2 +" "+ word1)
 		#the first 2 words in the trigram become the tuple key
-		key = (word3, word2)
+		key = (word1, word2)
 		print (key)
 		if key in reverseDict:
-			if word1 in reverseDict[key]:
+			if word3 in reverseDict[key]:
 				#add a count to the amount of times you've seen a word after a tuple
-				reverseDict[key][word1] += 1.0
+				reverseDict[key][word3] += 1.0
 			else:
 				#if you havent seen word 3 before add it to the dictionary
-				reverseDict[key][word1] = 1.0
+				reverseDict[key][word3] = 1.0
 		else:
 			#If you haven't seen a tuple before add it to the dictionary
 			reverseDict[key] = {}
-			reverseDict[key][word1] = 1.0
+			reverseDict[key][word3] = 1.0
 		
 
 fileCount = 0

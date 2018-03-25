@@ -27,11 +27,11 @@ def sumProbs (input):
 	return total
 
 for i in bigrams:
-	if i[1] == '#':
-		#Creating sum of all probabilities of trigrams that start with the following 
+	if i[0] == '#':
+		#Creating sum of all probabilities of bigrams that start with the following 
 		startDict[i]= sum(dict1[i].values())
-		startWords.append(i[0])
-		#print(i)
+		startWords.append(i[1])
+		
 
 #pprint.pprint(startWords)
 #thefile = open('checking.txt', 'w')
@@ -46,7 +46,7 @@ def firstTuple (method):
 	global startWords
 	global startDict
 	if method == 0:
-		return (random.choice(startWords),'#')
+		return ('#',random.choice(startWords))
 	if method == 1:
 		total = sum(startDict.values())
 		cumulativeProbability = 0.0
@@ -66,7 +66,7 @@ output = []
 for i in range(maxlines):
 	prevTuple = firstTuple(SeedWordMethod)
 	j = 0
-	output.append(prevTuple[0])
+	output.append(prevTuple[1])
 	print(prevTuple)
 	while j < maxwords:
 		j +=1
@@ -88,11 +88,12 @@ for i in range(maxlines):
 
 		prevTuple = (prevTuple[1],newWord)
 		output.append(newWord)
-		pprint.pprint(debugProbs)	#PRINT A DEBUG. Show the second, third, forth, etc. most likely words to follow. 
-		if newWord == '#' :		
+		#pprint.pprint(newWord)
+		#pprint.pprint(debugProbs)	#PRINT A DEBUG. Show the second, third, forth, etc. most likely words to follow. 
+		if newWord == '$' :		
 			break
 	output.pop()
-	print(' '.join(output))
+	print(' '.join(reversed(output)))
 	output = []
 	
 
