@@ -9,13 +9,14 @@ import sys
 import random
 import fnmatch
 import pprint
+import codecs,os,subprocess
 #SETTINGS#
 #create corpus from certain artists, the artist's names are in 3 letter combinations, eg. KEN for kendrick Llamar
-artistNames = [".ken.txt"]
+artistNames = [".txt"]
 path = '/Users/darius/Documents/ComSci2/project4/lyricsmode'
-outputFileName = "triChainKen.p"
-reverseOutputFileName = "revTriChainKen.p"
-ArtistRestriction = 1 #Does the code select from a list of artists, or make a chain out the the entire corpus
+outputFileName = "triChainBig.p"
+reverseOutputFileName = "revTriChainBig.p"
+ArtistRestriction = 0 #Does the code select from a list of artists, or make a chain out the the entire corpus
 #SETTINGS#
 
 
@@ -26,6 +27,7 @@ badcount = 0
 
 forwardDict = {}
 reverseDict = {}
+phonemeDict = {}
 words = []
 wordCount = 0.0
 #take words and split them into a 3 part trigram
@@ -38,8 +40,8 @@ def generateTrigram(words):
 def generateReverseTrigram(words):
 	if len(words) < 3: #unless the line has less than 3 words tho
  		return
-	for i in reversed(range(2,len(words))):
-		yield (words[i-2], words[i-1], words[i])
+	for i in reversed(range(2,len(words))): #between the beginning and end of the line:
+		yield (words[i-2], words[i-1], words[i]) #yield the first, second, and third word
  
  #add counts to words after tuples
 def count(line):
@@ -71,12 +73,12 @@ def revCount(line):
 	words = line.split(' ')
 	wordCount += len(words)
 	#run the trigram maker which returns a set of 3 words
-	print (line)
+	#print (line)
 	for word3, word2, word1 in generateReverseTrigram(words):
-		print(word3 +" "+ word2 +" "+ word1)
+		#print(word3 +" "+ word2 +" "+ word1)
 		#the first 2 words in the trigram become the tuple key
 		key = (word1, word2)
-		print (key)
+		#print (key)
 		if key in reverseDict:
 			if word3 in reverseDict[key]:
 				#add a count to the amount of times you've seen a word after a tuple
@@ -89,6 +91,19 @@ def revCount(line):
 			reverseDict[key] = {}
 			reverseDict[key][word3] = 1.0
 		
+def final2Phonemes(token):
+	CMD='speak -q --ipa '+token
+	#print CMD
+	try:
+		phoneme = subprocess.check_output(CMD.split()).strip()
+		uniCode = phoneme.decode('utf-8')
+		uniCode = re.sub("ː","",uniCode)
+		uniCode = re.sub("ˈ","",uniCode)
+		uniCode = re.sub("ˌ","",uniCode)
+		uniCode = uniCode[-2:]
+		return uniCode
+	except OSError:
+		return None
 
 fileCount = 0
 
@@ -177,6 +192,8 @@ for key in forwardDict:
 		forwardDict[key][word] = forwardDict[key][word]/wordCount
 
 for key in reverseDict:
+	if key[0] == '#':
+		print (key)
 	for word in reverseDict[key]:
 		reverseDict[key][word] = reverseDict[key][word]/wordCount
 	
@@ -185,5 +202,5 @@ pickle.dump( forwardDict, open( outputFileName, "wb" ) )
 # GENERATE OUTPUT
 print("saving pickle.")
 pickle.dump( reverseDict, open( reverseOutputFileName, "wb" ) )	
-
+#print(final2Phonemes('monkey'))
 print("all done!")

@@ -5,11 +5,11 @@ import random
 import pprint
 import operator
 #SETTINGS#
-inputFileName =  "revTriChainKen.p"
-maxlines = 1 #How many lines should the program write?
+inputFileName =  "revTriChain1.p"
+maxlines = 16 #How many lines should the program write?
 maxwords = 15#What's the maximum amount of words in a line before it cuts off
-ChanceOfMostRealisticChain = 1#this is how likely you want the program to run the maximum likeliness generation method rather than the weighted random generation method
-SeedWordMethod = 0 #0 is completely random String seed tuple, and 1 is a weighted random seed tuple
+ChanceOfMostRealisticChain = 0#this is how likely you want the program to run the maximum likeliness generation method rather than the weighted random generation method
+SeedWordMethod = 1 #0 is completely random String seed tuple, and 1 is a weighted random seed tuple
 #SETTINGS#
 
 dict1 = pickle.load( open(inputFileName, "rb" ) )
@@ -67,7 +67,7 @@ for i in range(maxlines):
 	prevTuple = firstTuple(SeedWordMethod)
 	j = 0
 	output.append(prevTuple[1])
-	print(prevTuple)
+	#print(prevTuple)
 	while j < maxwords:
 		j +=1
 		if random.random() < ChanceOfMostRealisticChain: 	#random.random spits out a number between 1 and 0. 
