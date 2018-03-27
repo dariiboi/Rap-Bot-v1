@@ -13,6 +13,7 @@ import codecs,os,subprocess
 #SETTINGS#
 #create corpus from certain artists, the artist's names are in 3 letter combinations, eg. KEN for kendrick Llamar
 artistNames = [".txt"]
+ipaVowels=['i','u','ɔ','a','i','ɪ','e','ɛ','æ','a','ə','ɑ','ɒ','ɔ','ʌ','o','ʊ','u','y','ʏ','ø','œ','ɐ','ɜ','ɞ','ɘ','ɵ','ʉ','ɨ','ɤ','ɯ']
 path = '/Users/darius/Documents/ComSci2/project4/lyricsmode'
 outputFileName = "triChainBig.p"
 reverseOutputFileName = "revTriChainBig.p"
@@ -28,6 +29,7 @@ badcount = 0
 forwardDict = {}
 reverseDict = {}
 phonemeDict = {}
+rhymeDict = {}
 words = []
 wordCount = 0.0
 #take words and split them into a 3 part trigram
@@ -100,7 +102,13 @@ def final2Phonemes(token):
 		uniCode = re.sub("ː","",uniCode)
 		uniCode = re.sub("ˈ","",uniCode)
 		uniCode = re.sub("ˌ","",uniCode)
-		uniCode = uniCode[-2:]
+		
+		if uniCode[-1:] in ipaVowels:	#if the last sound is a vowel
+			if len(uniCode) == 2:
+				uniCode = uniCode[-1:]
+			uniCode = uniCode[-2:]	#select the final 1 phonemes for the dictionary	
+		else:	#if the  last sound is a consonant
+			uniCode = uniCode[-3:]	#select the final 3 phonemes for the dictionary
 		return uniCode
 	except OSError:
 		return None
@@ -192,8 +200,17 @@ for key in forwardDict:
 		forwardDict[key][word] = forwardDict[key][word]/wordCount
 
 for key in reverseDict:
-	if key[0] == '#':
-		print (key)
+	if key[0] == '#':			#is this a final word?
+		#print (key[1])
+		finalPhoneme = final2Phonemes(key[1])	#iteratate thru all phonemes and return them as keys to the Phoneme dictionary
+		phonemeDict[key[1]]=finalPhoneme
+		if finalPhoneme in rhymeDict:
+			rhymeDict[finalPhoneme].append(key[1])
+		else:
+			rhymeDict[finalPhoneme]=[]
+			rhymeDict[finalPhoneme].append(key[1])
+	
+	#print(phonemeDict)
 	for word in reverseDict[key]:
 		reverseDict[key][word] = reverseDict[key][word]/wordCount
 	
@@ -202,5 +219,6 @@ pickle.dump( forwardDict, open( outputFileName, "wb" ) )
 # GENERATE OUTPUT
 print("saving pickle.")
 pickle.dump( reverseDict, open( reverseOutputFileName, "wb" ) )	
-#print(final2Phonemes('monkey'))
+#print(final2Phonemes('monkey')) 		#test print for the phoneme generator
 print("all done!")
+print(rhymeDict)
