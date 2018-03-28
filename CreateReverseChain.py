@@ -15,8 +15,10 @@ import codecs,os,subprocess
 artistNames = [".txt"]
 ipaVowels=['i','u','ɔ','a','i','ɪ','e','ɛ','æ','a','ə','ɑ','ɒ','ɔ','ʌ','o','ʊ','u','y','ʏ','ø','œ','ɐ','ɜ','ɞ','ɘ','ɵ','ʉ','ɨ','ɤ','ɯ']
 path = '/Users/darius/Documents/ComSci2/project4/lyricsmode'
-outputFileName = "triChainBig.p"
-reverseOutputFileName = "revTriChainBig.p"
+outputFileName = "triChainSmall.p"
+reverseOutputFileName = "revTriChainSmall.p"
+phonemeOutputFileName = "phonemes.p"	#key: word, value: phoneme
+rhymeOutputFileName = "rhymes.p"	#key: phoneme, value: list of words
 ArtistRestriction = 0 #Does the code select from a list of artists, or make a chain out the the entire corpus
 #SETTINGS#
 
@@ -92,8 +94,8 @@ def revCount(line):
 			#If you haven't seen a tuple before add it to the dictionary
 			reverseDict[key] = {}
 			reverseDict[key][word3] = 1.0
-		
-def final2Phonemes(token):
+			
+def final2Phonemes(token):	#rhyming function
 	CMD='speak -q --ipa '+token
 	#print CMD
 	try:
@@ -104,7 +106,7 @@ def final2Phonemes(token):
 		uniCode = re.sub("ˌ","",uniCode)
 		
 		if uniCode[-1:] in ipaVowels:	#if the last sound is a vowel
-			if len(uniCode) == 2:
+			if len(uniCode) == 2:	#if the word has only 2 sounds, return the final one
 				uniCode = uniCode[-1:]
 			uniCode = uniCode[-2:]	#select the final 1 phonemes for the dictionary	
 		else:	#if the  last sound is a consonant
@@ -166,6 +168,7 @@ for filename in os.listdir(path):
 	t = t.lower()
 	#take out things between the following symbols
 	t = re.sub("[\(\[].*?[\)\]]", "", t)
+	t = re.sub("[éêè]",'e',t)
 	#make sure to only use letters and numbers n the english alphebet and number system
 	t = re.sub("[^a-z0-9' \n]*", "", t)
 
@@ -217,8 +220,13 @@ for key in reverseDict:
 print("saving pickle.")
 pickle.dump( forwardDict, open( outputFileName, "wb" ) )	
 # GENERATE OUTPUT
-print("saving pickle.")
+print("saving pickle 2.")
 pickle.dump( reverseDict, open( reverseOutputFileName, "wb" ) )	
-#print(final2Phonemes('monkey')) 		#test print for the phoneme generator
+# GENERATE OUTPUT
+print("saving pickle 3.")
+pickle.dump( phonemeDict, open( phonemeOutputFileName, "wb" ) )	
+# GENERATE OUTPUT
+print("saving pickle 4.")
+pickle.dump( rhymeDict, open( rhymeOutputFileName, "wb" ) )	
 print("all done!")
-print(rhymeDict)
+#print(rhymeDict)

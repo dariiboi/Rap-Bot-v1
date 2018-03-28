@@ -5,26 +5,33 @@ import random
 import pprint
 import operator
 #SETTINGS#
-inputFileName =  "revTriChain1.p"
-maxlines = 16 #How many lines should the program write?
+inputFileName =  "revTriChainSmall.p"
+rhymeInputFileName =  "rhymes.p"
+phonemeInputFileName =  "phonemes.p"
+maxlines = 10 #How many lines should the program write?
 maxwords = 15#What's the maximum amount of words in a line before it cuts off
 ChanceOfMostRealisticChain = 0#this is how likely you want the program to run the maximum likeliness generation method rather than the weighted random generation method
-SeedWordMethod = 1 #0 is completely random String seed tuple, and 1 is a weighted random seed tuple
+SeedWordMethod = 0 #0 is completely random String seed tuple, and 1 is a weighted random seed tuple
 #SETTINGS#
-
+startTuple = ("#","guy")
 dict1 = pickle.load( open(inputFileName, "rb" ) )
+rhymeDict = pickle.load( open(rhymeInputFileName, "rb" ) )
+phonemeDict = pickle.load( open(phonemeInputFileName, "rb" ) )
 w1 = "$"
 w2 = "#"
-
+firstLine = 1 #1 is true, 0 is false
 startWords = []
 startDict = {}
 bigrams = list(dict1.keys())
-#print(bigrams)
-def sumProbs (input):
-	total = 0.0
-	for word in input:
-		total += input[word]
-	return total
+initSeed = 1
+#print (phonemeDict[])
+#where the rhymes happen
+def rhymeTime(previousWord):
+	previousPhoneme = phonemeDict[previousWord[1]]	#derive the sound at the end of the previous 
+	nextWord = random.choice(rhymeDict[previousPhoneme])	#choose a rhyming word
+	#print (nextWord)
+	return nextWord
+
 
 for i in bigrams:
 	if i[0] == '#':
@@ -61,14 +68,20 @@ def firstTuple (method):
 # Main Loop  to generate lines
 #
 #
-#pprint.pprint (newTuple())
+#prevTuple=firstTuple(SeedWordMethod)
 output = []
 for i in range(maxlines):
-	prevTuple = firstTuple(SeedWordMethod)
 	j = 0
-	output.append(prevTuple[1])
-	#print(prevTuple)
+	#if i % 2:
+	#	firstLine = 1
+	if firstLine == 1:
+		prevTuple=startTuple
+		output.append(startTuple[1])
+	else:
+		prevTuple=nextTuple
+		output.append(nextTuple[1])
 	while j < maxwords:
+
 		j +=1
 		if random.random() < ChanceOfMostRealisticChain: 	#random.random spits out a number between 1 and 0. 
 			#BUG: reverse chain has no keys that are (word, hash)
@@ -92,9 +105,14 @@ for i in range(maxlines):
 		#pprint.pprint(debugProbs)	#PRINT A DEBUG. Show the second, third, forth, etc. most likely words to follow. 
 		if newWord == '$' :		
 			break
+	nextTuple = ('#',rhymeTime(startTuple))
+	firstLine = 0 
+	#print (nextTuple)
+	#print (firstLine)
 	output.pop()
 	print(' '.join(reversed(output)))
 	output = []
+
 	
 
 
