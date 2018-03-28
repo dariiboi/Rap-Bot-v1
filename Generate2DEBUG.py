@@ -4,6 +4,9 @@ import sys
 import random
 import pprint
 import operator
+import sys,codecs,os,subprocess
+import pprint
+import re
 #SETTINGS#
 inputFileName =  "revTriChainSmall.p"
 rhymeInputFileName =  "rhymes.p"
@@ -13,10 +16,11 @@ maxwords = 15#What's the maximum amount of words in a line before it cuts off
 ChanceOfMostRealisticChain = 0#this is how likely you want the program to run the maximum likeliness generation method rather than the weighted random generation method
 SeedWordMethod = 0 #0 is completely random String seed tuple, and 1 is a weighted random seed tuple
 #SETTINGS#
-startTuple = ("#","guy")
+inputWord = ("#","kid")
 dict1 = pickle.load( open(inputFileName, "rb" ) )
 rhymeDict = pickle.load( open(rhymeInputFileName, "rb" ) )
 phonemeDict = pickle.load( open(phonemeInputFileName, "rb" ) )
+ipaVowels=['i','u','ɔ','a','i','ɪ','e','ɛ','æ','a','ə','ɑ','ɒ','ɔ','ʌ','o','ʊ','u','y','ʏ','ø','œ','ɐ','ɜ','ɞ','ɘ','ɵ','ʉ','ɨ','ɤ','ɯ']
 w1 = "$"
 w2 = "#"
 firstLine = 1 #1 is true, 0 is false
@@ -29,9 +33,31 @@ initSeed = 1
 def rhymeTime(previousWord):
 	previousPhoneme = phonemeDict[previousWord[1]]	#derive the sound at the end of the previous 
 	nextWord = random.choice(rhymeDict[previousPhoneme])	#choose a rhyming word
-	#print (nextWord)
-	return nextWord
+	nextTuple = ('#',nextWord)
+	return nextTuple
+def startRhyme(startPhoneme):
+	nextWord = random.choice(rhymeDict[startPhoneme])	#choose a rhyming word
+	nextTuple = ('#',nextWord)
+	return nextTuple
+def espeak2ipa(token):	#rhyming function
+	CMD='speak -q --ipa '+token
+	#print CMD
+	try:
+		phoneme = subprocess.check_output(CMD.split()).strip()
+		uniCode = phoneme.decode('utf-8')
+		uniCode = re.sub("ː","",uniCode)
+		uniCode = re.sub("ˈ","",uniCode)
+		uniCode = re.sub("ˌ","",uniCode)
 
+		if uniCode[-1:] in ipaVowels:	#if the last sound is a vowel
+			if len(uniCode) == 2:	#if the word has only 2 sounds, return the final one
+				uniCode = uniCode[-1:]
+			uniCode = uniCode[-2:]	#select the final 1 phonemes for the dictionary	
+		else:	#if the  last sound is a consonant
+			uniCode = uniCode[-3:]	#select the final 3 phonemes for the dictionary
+		return uniCode
+	except OSError:
+		return None
 
 for i in bigrams:
 	if i[0] == '#':
@@ -68,15 +94,20 @@ def firstTuple (method):
 # Main Loop  to generate lines
 #
 #
-#prevTuple=firstTuple(SeedWordMethod)
+
 output = []
 for i in range(maxlines):
 	j = 0
 	#if i % 2:
 	#	firstLine = 1
 	if firstLine == 1:
+		output.append(inputWord[1])
+		startPhoneme = espeak2ipa(inputWord[1])
+		
+		startTuple = startRhyme(startPhoneme)
+
 		prevTuple=startTuple
-		output.append(startTuple[1])
+		#output.append(startTuple[1])
 	else:
 		prevTuple=nextTuple
 		output.append(nextTuple[1])
@@ -105,7 +136,7 @@ for i in range(maxlines):
 		#pprint.pprint(debugProbs)	#PRINT A DEBUG. Show the second, third, forth, etc. most likely words to follow. 
 		if newWord == '$' :		
 			break
-	nextTuple = ('#',rhymeTime(startTuple))
+	nextTuple = rhymeTime(startTuple)
 	firstLine = 0 
 	#print (nextTuple)
 	#print (firstLine)
