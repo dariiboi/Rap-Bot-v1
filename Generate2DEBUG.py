@@ -16,7 +16,7 @@ maxwords = 15#What's the maximum amount of words in a line before it cuts off
 ChanceOfMostRealisticChain = 0#this is how likely you want the program to run the maximum likeliness generation method rather than the weighted random generation method
 SeedWordMethod = 0 #0 is completely random String seed tuple, and 1 is a weighted random seed tuple
 #SETTINGS#
-inputWord = ("#","kid")
+startTuple = ("#","top")
 dict1 = pickle.load( open(inputFileName, "rb" ) )
 rhymeDict = pickle.load( open(rhymeInputFileName, "rb" ) )
 phonemeDict = pickle.load( open(phonemeInputFileName, "rb" ) )
@@ -31,7 +31,8 @@ initSeed = 1
 #print (phonemeDict[])
 #where the rhymes happen
 def rhymeTime(previousWord):
-	previousPhoneme = phonemeDict[previousWord[1]]	#derive the sound at the end of the previous 
+	previousPhoneme = phonemeDict[previousWord[1]]
+	print (previousPhoneme)	#derive the sound at the end of the previous 
 	nextWord = random.choice(rhymeDict[previousPhoneme])	#choose a rhyming word
 	nextTuple = ('#',nextWord)
 	return nextTuple
@@ -101,13 +102,10 @@ for i in range(maxlines):
 	#if i % 2:
 	#	firstLine = 1
 	if firstLine == 1:
-		output.append(inputWord[1])
-		startPhoneme = espeak2ipa(inputWord[1])
-		
-		startTuple = startRhyme(startPhoneme)
-
+		#output.append(inputWord[1])
+		#startPhoneme = espeak2ipa(inputWord[1])
+		output.append(startTuple[1])		#startTuple = startRhyme(startPhoneme)`#non functional
 		prevTuple=startTuple
-		#output.append(startTuple[1])
 	else:
 		prevTuple=nextTuple
 		output.append(nextTuple[1])

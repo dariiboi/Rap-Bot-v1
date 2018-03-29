@@ -14,11 +14,11 @@ import codecs,os,subprocess
 #create corpus from certain artists, the artist's names are in 3 letter combinations, eg. KEN for kendrick Llamar
 artistNames = [".txt"]
 ipaVowels=['i','u','ɔ','a','i','ɪ','e','ɛ','æ','a','ə','ɑ','ɒ','ɔ','ʌ','o','ʊ','u','y','ʏ','ø','œ','ɐ','ɜ','ɞ','ɘ','ɵ','ʉ','ɨ','ɤ','ɯ']
-path = '/Users/darius/Documents/ComSci2/project4/lyricsmode'
-outputFileName = "triChainSmall.p"
-reverseOutputFileName = "revTriChainSmall.p"
-phonemeOutputFileName = "phonemes.p"	#key: word, value: phoneme
-rhymeOutputFileName = "rhymes.p"	#key: phoneme, value: list of words
+path = '/Users/darius/Downloads/hiphoplyrics'
+outputFileName = "triChainBig.p"
+reverseOutputFileName = "revTriChainBig.p"
+phonemeOutputFileName = "phonemesBig.p"	#key: word, value: phoneme
+rhymeOutputFileName = "rhymesBig.p"	#key: phoneme, value: list of words
 ArtistRestriction = 0 #Does the code select from a list of artists, or make a chain out the the entire corpus
 #SETTINGS#
 
