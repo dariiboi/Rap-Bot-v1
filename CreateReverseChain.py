@@ -105,11 +105,11 @@ def final2Phonemes(token):	#rhyming function
 		uniCode = re.sub("ˈ","",uniCode)
 		uniCode = re.sub("ˌ","",uniCode)
 
-		if len(uniCode) == 2:	#if the word has only 2 sounds, return the final one
+		if len(uniCode) <= 2:	#if the word has only 2 sounds, return the final one
 			uniCode = uniCode[-1:]
 			print(uniCode)
 			return uniCode
-		if uniCode[-2] in ipaVowels or uniCode[-1] in ipaVowels :	#if the last sound is a vowel
+		if uniCode[-2] in ipaVowels or uniCode[-1] in ipaVowels :	#if the last or second last sound is a vowel
 			uniCode = uniCode[-2:]	#select the final 1 phonemes for the dictionary	
 			print(uniCode)
 			return uniCode
