@@ -13,8 +13,8 @@ import codecs,os,subprocess
 #SETTINGS#
 #create corpus from certain artists, the artist's names are in 3 letter combinations, eg. KEN for kendrick Llamar
 artistNames = [".txt"]
-ipaVowels=['i','u','ɔ','a','i','ɪ','e','ɛ','æ','a','ə','ɑ','ɒ','ɔ','ʌ','o','ʊ','u','y','ʏ','ø','œ','ɐ','ɜ','ɞ','ɘ','ɵ','ʉ','ɨ','ɤ','ɯ']
-path = '/Users/darius/Downloads/hiphoplyrics'
+ipaVowels=['i','u','a','i','ɪ','e','ɛ','æ','a','ə','ɑ','ɒ','ɔ','ʌ','o','ʊ','u','y','ʏ','ø','œ','ɐ','ɜ','ɞ','ɘ','ɵ','ʉ','ɨ','ɤ','ɯ']
+path = '/Users/darius/Documents/ComSci2/project4/lyricsmode'
 outputFileName = "triChainBig.p"
 reverseOutputFileName = "revTriChainBig.p"
 phonemeOutputFileName = "phonemesBig.p"	#key: word, value: phoneme
@@ -104,14 +104,19 @@ def final2Phonemes(token):	#rhyming function
 		uniCode = re.sub("ː","",uniCode)
 		uniCode = re.sub("ˈ","",uniCode)
 		uniCode = re.sub("ˌ","",uniCode)
-		
-		if uniCode[-1:] in ipaVowels:	#if the last sound is a vowel
-			if len(uniCode) == 2:	#if the word has only 2 sounds, return the final one
-				uniCode = uniCode[-1:]
+
+		if len(uniCode) == 2:	#if the word has only 2 sounds, return the final one
+			uniCode = uniCode[-1:]
+			print(uniCode)
+			return uniCode
+		if uniCode[-2] in ipaVowels or uniCode[-1] in ipaVowels :	#if the last sound is a vowel
 			uniCode = uniCode[-2:]	#select the final 1 phonemes for the dictionary	
+			print(uniCode)
+			return uniCode
 		else:	#if the  last sound is a consonant
 			uniCode = uniCode[-3:]	#select the final 3 phonemes for the dictionary
-		return uniCode
+			print(uniCode)
+			return uniCode
 	except OSError:
 		return None
 
@@ -201,17 +206,20 @@ print("converting to probabilities")
 for key in forwardDict:
 	for word in forwardDict[key]:
 		forwardDict[key][word] = forwardDict[key][word]/wordCount
+		print("Forward dictionary in process")
 
 for key in reverseDict:
 	if key[0] == '#':			#is this a final word?
 		#print (key[1])
 		finalPhoneme = final2Phonemes(key[1])	#iteratate thru all phonemes and return them as keys to the Phoneme dictionary
 		phonemeDict[key[1]]=finalPhoneme
+		print("phoneme dictionary in process")
 		if finalPhoneme in rhymeDict:
 			rhymeDict[finalPhoneme].append(key[1])
 		else:
 			rhymeDict[finalPhoneme]=[]
 			rhymeDict[finalPhoneme].append(key[1])
+			print("Rhyming dictionary in process")
 	
 	#print(phonemeDict)
 	for word in reverseDict[key]:

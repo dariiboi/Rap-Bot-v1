@@ -8,15 +8,15 @@ import sys,codecs,os,subprocess
 import pprint
 import re
 #SETTINGS#
-inputFileName =  "revTriChainSmall.p"
-rhymeInputFileName =  "rhymes.p"
-phonemeInputFileName =  "phonemes.p"
+inputFileName =  "revTriChainBig.p"
+rhymeInputFileName =  "rhymesBig.p"
+phonemeInputFileName =  "phonemesBig.p"
 maxlines = 10 #How many lines should the program write?
 maxwords = 15#What's the maximum amount of words in a line before it cuts off
 ChanceOfMostRealisticChain = 0#this is how likely you want the program to run the maximum likeliness generation method rather than the weighted random generation method
 SeedWordMethod = 0 #0 is completely random String seed tuple, and 1 is a weighted random seed tuple
 #SETTINGS#
-startTuple = ("#","top")
+startTuple = ("#","guy")
 dict1 = pickle.load( open(inputFileName, "rb" ) )
 rhymeDict = pickle.load( open(rhymeInputFileName, "rb" ) )
 phonemeDict = pickle.load( open(phonemeInputFileName, "rb" ) )
@@ -32,7 +32,7 @@ initSeed = 1
 #where the rhymes happen
 def rhymeTime(previousWord):
 	previousPhoneme = phonemeDict[previousWord[1]]
-	print (previousPhoneme)	#derive the sound at the end of the previous 
+	#print (previousPhoneme)	#derive the sound at the end of the previous 
 	nextWord = random.choice(rhymeDict[previousPhoneme])	#choose a rhyming word
 	nextTuple = ('#',nextWord)
 	return nextTuple
