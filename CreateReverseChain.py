@@ -14,7 +14,7 @@ import codecs,os,subprocess
 #create corpus from certain artists, the artist's names are in 3 letter combinations, eg. KEN for kendrick Llamar
 artistNames = [".txt"]
 ipaVowels=['i','u','a','i','ɪ','e','ɛ','æ','a','ə','ɑ','ɒ','ɔ','ʌ','o','ʊ','u','y','ʏ','ø','œ','ɐ','ɜ','ɞ','ɘ','ɵ','ʉ','ɨ','ɤ','ɯ']
-path = '/Users/darius/Documents/ComSci2/project4/lyricsmode'
+path = '/Users/darius/Downloads/lyricsModesmaller'
 outputFileName = "triChainBig.p"
 reverseOutputFileName = "revTriChainBig.p"
 phonemeOutputFileName = "phonemesBig.p"	#key: word, value: phoneme
@@ -81,19 +81,23 @@ def revCount(line):
 	for word3, word2, word1 in generateReverseTrigram(words):
 		#print(word3 +" "+ word2 +" "+ word1)
 		#the first 2 words in the trigram become the tuple key
-		key = (word1, word2)
-		#print (key)
-		if key in reverseDict:
-			if word3 in reverseDict[key]:
-				#add a count to the amount of times you've seen a word after a tuple
-				reverseDict[key][word3] += 1.0
+		if not word1 or not word2 or not word3 or word1 == "'" or word2 == "'" or word3 == "'": 	#is one of the keys an empty string?
+			print(word1 + " " + word2  + " " + word3 )
+			continue	#dont add it to the dictionary
+		else:	
+			key = (word1, word2)
+			#print (key)
+			if key in reverseDict:
+				if word3 in reverseDict[key]:
+					#add a count to the amount of times you've seen a word after a tuple
+					reverseDict[key][word3] += 1.0
+				else:
+					#if you havent seen word 3 before add it to the dictionary
+					reverseDict[key][word3] = 1.0
 			else:
-				#if you havent seen word 3 before add it to the dictionary
+				#If you haven't seen a tuple before add it to the dictionary
+				reverseDict[key] = {}
 				reverseDict[key][word3] = 1.0
-		else:
-			#If you haven't seen a tuple before add it to the dictionary
-			reverseDict[key] = {}
-			reverseDict[key][word3] = 1.0
 			
 def final2Phonemes(token):	#rhyming function
 	CMD='speak -q --ipa '+token
@@ -105,17 +109,17 @@ def final2Phonemes(token):	#rhyming function
 		uniCode = re.sub("ˈ","",uniCode)
 		uniCode = re.sub("ˌ","",uniCode)
 
-		if len(uniCode) <= 2:	#if the word has only 2 sounds, return the final one
+		if len(uniCode) == 1:	#if the word has only 2 sounds, return the final one
 			uniCode = uniCode[-1:]
-			print(uniCode)
+			#print(uniCode)
 			return uniCode
 		if uniCode[-2] in ipaVowels or uniCode[-1] in ipaVowels :	#if the last or second last sound is a vowel
 			uniCode = uniCode[-2:]	#select the final 1 phonemes for the dictionary	
-			print(uniCode)
+			#print(uniCode)
 			return uniCode
 		else:	#if the  last sound is a consonant
 			uniCode = uniCode[-3:]	#select the final 3 phonemes for the dictionary
-			print(uniCode)
+			#print(uniCode)
 			return uniCode
 	except OSError:
 		return None
@@ -206,25 +210,31 @@ print("converting to probabilities")
 for key in forwardDict:
 	for word in forwardDict[key]:
 		forwardDict[key][word] = forwardDict[key][word]/wordCount
-		print("Forward dictionary in process")
-
+		#print("Forward dictionary in process")
+print("now reverse dict")
+myCount = 0
+numKeys = len(reverseDict)
 for key in reverseDict:
+	for prevWord in reverseDict[key]:	# for every time a word comes up as the value of reverseDIct, multiply it by the word count to make the probability
+		reverseDict[key][prevWord] = reverseDict[key][prevWord]/wordCount
+	myCount += 1
 	if key[0] == '#':			#is this a final word?
 		#print (key[1])
+		print("phoneme dictionary in process "  + key[1] + " at " + str(myCount) + " of " + str(numKeys))
 		finalPhoneme = final2Phonemes(key[1])	#iteratate thru all phonemes and return them as keys to the Phoneme dictionary
+		if finalPhoneme is None:
+			print("Espeak failed on " + key[1])		#give the key on which espeak failed
+			continue
 		phonemeDict[key[1]]=finalPhoneme
-		print("phoneme dictionary in process")
+		
 		if finalPhoneme in rhymeDict:
 			rhymeDict[finalPhoneme].append(key[1])
 		else:
 			rhymeDict[finalPhoneme]=[]
 			rhymeDict[finalPhoneme].append(key[1])
-			print("Rhyming dictionary in process")
+			#print("Rhyming dictionary in process")
 	
 	#print(phonemeDict)
-	for word in reverseDict[key]:
-		reverseDict[key][word] = reverseDict[key][word]/wordCount
-	
 print("saving pickle.")
 pickle.dump( forwardDict, open( outputFileName, "wb" ) )	
 # GENERATE OUTPUT

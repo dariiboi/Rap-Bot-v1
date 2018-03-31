@@ -11,12 +11,12 @@ import re
 inputFileName =  "revTriChainBig.p"
 rhymeInputFileName =  "rhymesBig.p"
 phonemeInputFileName =  "phonemesBig.p"
-maxlines = 10 #How many lines should the program write?
+maxlines = 16 #How many lines should the program write?
 maxwords = 15#What's the maximum amount of words in a line before it cuts off
-ChanceOfMostRealisticChain = 0#this is how likely you want the program to run the maximum likeliness generation method rather than the weighted random generation method
+ChanceOfMostRealisticChain = 0.5#this is how likely you want the program to run the maximum likeliness generation method rather than the weighted random generation method
 SeedWordMethod = 0 #0 is completely random String seed tuple, and 1 is a weighted random seed tuple
 #SETTINGS#
-startTuple = ("#","dick")
+startTuple = ("#","gun")
 dict1 = pickle.load( open(inputFileName, "rb" ) )
 rhymeDict = pickle.load( open(rhymeInputFileName, "rb" ) )
 phonemeDict = pickle.load( open(phonemeInputFileName, "rb" ) )
@@ -27,6 +27,7 @@ firstLine = 1 #1 is true, 0 is false
 startWords = []
 startDict = {}
 bigrams = list(dict1.keys())
+endWords = list(phonemeDict.keys())
 initSeed = 1
 #print (phonemeDict[])
 #where the rhymes happen
@@ -80,7 +81,8 @@ def firstTuple (method):
 	global startWords
 	global startDict
 	if method == 0:
-		return ('#',random.choice(startWords))
+		#return ('#',random.choice(startWords))
+		return ('#',random.choice(endWords))
 	if method == 1:
 		total = sum(startDict.values())
 		cumulativeProbability = 0.0
@@ -95,20 +97,22 @@ def firstTuple (method):
 # Main Loop  to generate lines
 #
 #
-
+BTuple = firstTuple(SeedWordMethod)		#genereate random B rhyme
 output = []
 for i in range(maxlines):
-	j = 0
-	#if i % 2:
-	#	firstLine = 1
-	if firstLine == 1:
-		#output.append(inputWord[1])
-		#startPhoneme = espeak2ipa(inputWord[1])
-		output.append(startTuple[1])		#startTuple = startRhyme(startPhoneme)`#non functional
-		prevTuple=startTuple
+	j = 0	
+	
+	if i == 0:
+		output.append(startTuple[1])		#add the last word in the line to output
+		prevTuple=startTuple		
 	else:
-		prevTuple=nextTuple
-		output.append(nextTuple[1])
+		if i % 2:
+			prevTuple=nextBTuple
+			output.append(nextBTuple[1])
+		else:
+			prevTuple=nextTuple
+			output.append(nextTuple[1])
+	
 	while j < maxwords:
 
 		j +=1
@@ -135,7 +139,7 @@ for i in range(maxlines):
 		if newWord == '$' :		
 			break
 	nextTuple = rhymeTime(startTuple)
-	firstLine = 0 
+	nextBTuple = rhymeTime(BTuple)
 	#print (nextTuple)
 	#print (firstLine)
 	output.pop()
