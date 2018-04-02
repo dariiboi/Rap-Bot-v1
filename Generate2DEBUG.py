@@ -11,12 +11,12 @@ import re
 inputFileName =  "revTriChainBig.p"
 rhymeInputFileName =  "rhymesBig.p"
 phonemeInputFileName =  "phonemesBig.p"
-maxlines = 16 #How many lines should the program write?
+maxlines = 8 #How many lines should the program write?
 maxwords = 15#What's the maximum amount of words in a line before it cuts off
 ChanceOfMostRealisticChain = 0.5#this is how likely you want the program to run the maximum likeliness generation method rather than the weighted random generation method
 SeedWordMethod = 0 #0 is completely random String seed tuple, and 1 is a weighted random seed tuple
 #SETTINGS#
-startTuple = ("#","gun")
+startTuple = ("#","kitten")
 dict1 = pickle.load( open(inputFileName, "rb" ) )
 rhymeDict = pickle.load( open(rhymeInputFileName, "rb" ) )
 phonemeDict = pickle.load( open(phonemeInputFileName, "rb" ) )
@@ -99,6 +99,7 @@ def firstTuple (method):
 #
 BTuple = firstTuple(SeedWordMethod)		#genereate random B rhyme
 output = []
+A = True
 for i in range(maxlines):
 	j = 0	
 	
@@ -107,6 +108,10 @@ for i in range(maxlines):
 		prevTuple=startTuple		
 	else:
 		if i % 2:
+			A = A
+		else:
+			A = not A
+		if A == False:
 			prevTuple=nextBTuple
 			output.append(nextBTuple[1])
 		else:

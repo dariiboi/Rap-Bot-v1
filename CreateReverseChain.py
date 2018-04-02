@@ -109,12 +109,16 @@ def final2Phonemes(token):	#rhyming function
 		uniCode = re.sub("ˈ","",uniCode)
 		uniCode = re.sub("ˌ","",uniCode)
 
-		if len(uniCode) == 1:	#if the word has only 2 sounds, return the final one
+		if len(uniCode) == 1:	#if the word has only 1 sound, return the final one
 			uniCode = uniCode[-1:]
 			#print(uniCode)
 			return uniCode
+		if uniCode[-2] and uniCode[-3] in ipaVowels :	#If the second and third last phoneme are vowels, the word has a conjunction vowel like kˈəʊk (coke)
+			uniCode = uniCode[-3:]	#select the final 3 phonemes for the dictionary	
+			#print(uniCode)
+			return uniCode	
 		if uniCode[-2] in ipaVowels or uniCode[-1] in ipaVowels :	#if the last or second last sound is a vowel
-			uniCode = uniCode[-2:]	#select the final 1 phonemes for the dictionary	
+			uniCode = uniCode[-2:]	#select the final 2 phonemes for the dictionary	
 			#print(uniCode)
 			return uniCode
 		else:	#if the  last sound is a consonant
@@ -220,7 +224,7 @@ for key in reverseDict:
 	myCount += 1
 	if key[0] == '#':			#is this a final word?
 		#print (key[1])
-		print("phoneme dictionary in process "  + key[1] + " at " + str(myCount) + " of " + str(numKeys))
+		#print("phoneme dictionary in process "  + key[1] + " at " + str(myCount) + " of " + str(numKeys))
 		finalPhoneme = final2Phonemes(key[1])	#iteratate thru all phonemes and return them as keys to the Phoneme dictionary
 		if finalPhoneme is None:
 			print("Espeak failed on " + key[1])		#give the key on which espeak failed
