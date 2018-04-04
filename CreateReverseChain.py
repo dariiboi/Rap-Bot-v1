@@ -19,6 +19,7 @@ outputFileName = "triChainBig.p"
 reverseOutputFileName = "revTriChainBig.p"
 phonemeOutputFileName = "phonemesBig.p"	#key: word, value: phoneme
 rhymeOutputFileName = "rhymesBig.p"	#key: phoneme, value: list of words
+rhymeProbsFileName = "rhymeProbsBig.p"	#key: phoneme, value: list of words
 ArtistRestriction = 0 #Does the code select from a list of artists, or make a chain out the the entire corpus
 #SETTINGS#
 
@@ -109,7 +110,7 @@ def final2Phonemes(token):	#rhyming function
 		uniCode = re.sub("ˈ","",uniCode)
 		uniCode = re.sub("ˌ","",uniCode)
 
-		if len(uniCode) == 1:	#if the word has only 1 sound, return the final one
+		if len(uniCode) == 1:	#if the word has only 1ç sound, return the final one
 			uniCode = uniCode[-1:]
 			#print(uniCode)
 			return uniCode
@@ -224,7 +225,7 @@ for key in reverseDict:
 	myCount += 1
 	if key[0] == '#':			#is this a final word?
 		#print (key[1])
-		#print("phoneme dictionary in process "  + key[1] + " at " + str(myCount) + " of " + str(numKeys))
+		print("phoneme dictionary in process "  + key[1] + " at " + str(myCount) + " of " + str(numKeys))
 		finalPhoneme = final2Phonemes(key[1])	#iteratate thru all phonemes and return them as keys to the Phoneme dictionary
 		if finalPhoneme is None:
 			print("Espeak failed on " + key[1])		#give the key on which espeak failed
