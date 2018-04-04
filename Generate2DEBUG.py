@@ -16,33 +16,42 @@ maxlines = 8 #How many lines should the program write?
 maxwords = 15#What's the maximum amount of words in a line before it cuts off
 ChanceOfMostRealisticChain = 0#this is how likely you want the program to run the maximum likeliness generation method rather than the weighted random generation method
 SeedWordMethod = 0 #0 is completely random String seed tuple, and 1 is a weighted random seed tuple
+nextRhymeMethod = 1 #0 is completely random end word, and 1 is a weighted random end word
 #SETTINGS#
 startTuple = ("#","yes")
-dict1 = pickle.load( open(inputFileName, "rb" ) )
-rhymeDict = pickle.load( open(rhymeInputFileName, "rb" ) )
-phonemeDict = pickle.load( open(phonemeInputFileName, "rb" ) )
+dict1 = pickle.load( open(inputFileName, "rb" ) )					#Reversed TriChain
+rhymeDict = pickle.load( open(rhymeInputFileName, "rb" ) )			#RHYMES
+phonemeDict = pickle.load( open(phonemeInputFileName, "rb" ) )		#InitPhonemes
+rhymeProbs = pickle.load( open(rhymeProbsInputFileName, "rb" ) )	#For weighted random
 ipaVowels=['i','u','ɔ','a','i','ɪ','e','ɛ','æ','a','ə','ɑ','ɒ','ɔ','ʌ','o','ʊ','u','y','ʏ','ø','œ','ɐ','ɜ','ɞ','ɘ','ɵ','ʉ','ɨ','ɤ','ɯ']
 w1 = "$"
 w2 = "#"
-firstLine = 1 #1 is true, 0 is false
 startWords = []
 startDict = {}
 bigrams = list(dict1.keys())
 endWords = list(phonemeDict.keys())
 initSeed = 1
-#print (phonemeDict[])
-#where the rhymes happen
+
 def rhymeTime(previousWord):
 	previousPhoneme = phonemeDict[previousWord[1]]
 	#print (previousPhoneme)	#derive the sound at the end of the previous 
-	nextWord = random.choice(rhymeDict[previousPhoneme])	#choose a rhyming word
+	if nextRhymeMethod == 0:
+		nextWord = random.choice(rhymeDict[previousPhoneme])	#choose a rhyming word completely randomly!
+	else:
+		total = sum(rhymeProbs[previousPhoneme].values()) #Weighted random probability!!
+		p = random.random()
+		cumulativeProbability = 0.0
+		for key, value in rhymeProbs[previousPhoneme].items():
+			cumulativeProbability += (value/total)
+			if (p <= cumulativeProbability):
+				nextWord = key
 	nextTuple = ('#',nextWord)
 	return nextTuple
-def startRhyme(startPhoneme):
+def startRhyme(startPhoneme):	#NOT IN USE
 	nextWord = random.choice(rhymeDict[startPhoneme])	#choose a rhyming word
 	nextTuple = ('#',nextWord)
 	return nextTuple
-def espeak2ipa(token):	#rhyming function
+def espeak2ipa(token):	#NOT IN USE 
 	CMD='speak -q --ipa '+token
 	#print CMD
 	try:
