@@ -14,12 +14,12 @@ import codecs,os,subprocess
 #create corpus from certain artists, the artist's names are in 3 letter combinations, eg. KEN for kendrick Llamar
 artistNames = [".txt"]
 ipaVowels=['i','u','a','i','ɪ','e','ɛ','æ','a','ə','ɑ','ɒ','ɔ','ʌ','o','ʊ','u','y','ʏ','ø','œ','ɐ','ɜ','ɞ','ɘ','ɵ','ʉ','ɨ','ɤ','ɯ']
-path = '/Users/darius/Downloads/lyricsModesmaller'
-outputFileName = "triChainBig.p"
-reverseOutputFileName = "revTriChainBig.p"
-phonemeOutputFileName = "phonemesBig.p"	#key: word, value: phoneme
-rhymeOutputFileName = "rhymesBig.p"	#key: phoneme, value: list of words
-rhymeProbsFileName = "rhymeProbsBig.p"	#key: phoneme, value: list of words
+path = '/Users/darius/Documents/ComSci2/project4/lyricsmode'
+outputFileName = "triChain_04_03_18.p"
+reverseOutputFileName = "revTriChain_04_03_18.p"
+phonemeOutputFileName = "phonemes_04_03_18.p"	#key: word, value: phoneme
+rhymeOutputFileName = "rhymes_04_03_18.p"	#key: phoneme, value: list of words
+rhymeProbsFileName = "rhymeProbs_04_03_18.p"	#key: phoneme, value: list of words
 ArtistRestriction = 0 #Does the code select from a list of artists, or make a chain out the the entire corpus
 #SETTINGS#
 
@@ -34,6 +34,7 @@ reverseDict = {}
 phonemeDict = {}
 rhymeDict = {}
 words = []
+endWordCount = 0.0
 wordCount = 0.0
 #take words and split them into a 3 part trigram
 def generateTrigram(words):
@@ -114,10 +115,11 @@ def final2Phonemes(token):	#rhyming function
 			uniCode = uniCode[-1:]
 			#print(uniCode)
 			return uniCode
-		if uniCode[-2] and uniCode[-3] in ipaVowels :	#If the second and third last phoneme are vowels, the word has a conjunction vowel like kˈəʊk (coke)
-			uniCode = uniCode[-3:]	#select the final 3 phonemes for the dictionary	
-			#print(uniCode)
-			return uniCode	
+		if len(uniCode) >3:
+			if uniCode[-2] and uniCode[-3] in ipaVowels :	#If the second and third last phoneme are vowels, the word has a conjunction vowel like kˈəʊk (coke)
+				uniCode = uniCode[-3:]	#select the final 3 phonemes for the dictionary	
+				#print(uniCode)
+				return uniCode	
 		if uniCode[-2] in ipaVowels or uniCode[-1] in ipaVowels :	#if the last or second last sound is a vowel
 			uniCode = uniCode[-2:]	#select the final 2 phonemes for the dictionary	
 			#print(uniCode)
@@ -220,12 +222,12 @@ print("now reverse dict")
 myCount = 0
 numKeys = len(reverseDict)
 for key in reverseDict:
-	for prevWord in reverseDict[key]:	# for every time a word comes up as the value of reverseDIct, multiply it by the word count to make the probability
+	for prevWord in reverseDict[key]:	# for every time a word comes up as the value of reverseDIct, divide it by the word count to make the probability
 		reverseDict[key][prevWord] = reverseDict[key][prevWord]/wordCount
 	myCount += 1
 	if key[0] == '#':			#is this a final word?
-		#print (key[1])
-		print("phoneme dictionary in process "  + key[1] + " at " + str(myCount) + " of " + str(numKeys))
+		endWordCount += 1
+		#print("phoneme dictionary in process "  + key[1] + " at " + str(myCount) + " of " + str(numKeys))
 		finalPhoneme = final2Phonemes(key[1])	#iteratate thru all phonemes and return them as keys to the Phoneme dictionary
 		if finalPhoneme is None:
 			print("Espeak failed on " + key[1])		#give the key on which espeak failed
@@ -242,6 +244,8 @@ for key in reverseDict:
 			rhymeDict[finalPhoneme]=[]
 			rhymeDict[finalPhoneme].append(key[1])
 			#print("Rhyming dictionary in process")
+for rhymeKey in rhymeProbs.keys():	#for every key in the dict, divide the wordcount by the total number of end words to get a probability
+	rhymeProbs[rhymeKey] = rhymeProbs[rhymeKey]/endWordCount
 	
 	#print(phonemeDict)
 print("saving pickle.")
@@ -255,5 +259,7 @@ pickle.dump( phonemeDict, open( phonemeOutputFileName, "wb" ) )
 # GENERATE OUTPUT
 print("saving pickle 4.")
 pickle.dump( rhymeDict, open( rhymeOutputFileName, "wb" ) )	
+print("saving pickle 5.")
+pickle.dump( rhymeProbs, open( rhymeProbsFileName, "wb" ) )	
 print("all done!")
 #print(rhymeDict)

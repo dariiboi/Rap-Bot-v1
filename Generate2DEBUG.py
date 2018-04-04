@@ -8,15 +8,16 @@ import sys,codecs,os,subprocess
 import pprint
 import re
 #SETTINGS#
-inputFileName =  "revTriChainBig.p"
-rhymeInputFileName =  "rhymesBig.p"
-phonemeInputFileName =  "phonemesBig.p"
+inputFileName =  "revTriChain_04_03_18.p"
+rhymeInputFileName =  "rhymes_04_03_18.p"
+phonemeInputFileName =  "phonemes_04_03_18.p"
+rhymeProbsInputFileName ="rhymeProbs_04_03_18.p"
 maxlines = 8 #How many lines should the program write?
 maxwords = 15#What's the maximum amount of words in a line before it cuts off
-ChanceOfMostRealisticChain = 0.5#this is how likely you want the program to run the maximum likeliness generation method rather than the weighted random generation method
+ChanceOfMostRealisticChain = 0#this is how likely you want the program to run the maximum likeliness generation method rather than the weighted random generation method
 SeedWordMethod = 0 #0 is completely random String seed tuple, and 1 is a weighted random seed tuple
 #SETTINGS#
-startTuple = ("#","kitten")
+startTuple = ("#","nigga")
 dict1 = pickle.load( open(inputFileName, "rb" ) )
 rhymeDict = pickle.load( open(rhymeInputFileName, "rb" ) )
 phonemeDict = pickle.load( open(phonemeInputFileName, "rb" ) )
