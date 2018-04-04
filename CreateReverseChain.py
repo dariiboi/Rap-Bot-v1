@@ -28,7 +28,7 @@ ArtistRestriction = 0 #Does the code select from a list of artists, or make a ch
 sys.getdefaultencoding()
 badcount = 0
 #path = '/Users/darius/Documents/ComSci2/project4/lyricsmode'
-
+rhymeProbs = {}
 forwardDict = {}
 reverseDict = {}
 phonemeDict = {}
@@ -230,6 +230,10 @@ for key in reverseDict:
 		if finalPhoneme is None:
 			print("Espeak failed on " + key[1])		#give the key on which espeak failed
 			continue
+		if key[1] in rhymeProbs:
+			rhymeProbs[key[1]] += 1
+		else:
+			rhymeProbs[key[1]] = 1
 		phonemeDict[key[1]]=finalPhoneme
 		
 		if finalPhoneme in rhymeDict:
