@@ -8,15 +8,22 @@ import sys,codecs,os,subprocess
 import pprint
 import re
 #SETTINGS#
-inputFileName =  "revTriChain_04_03_18.p"
-rhymeInputFileName =  "rhymes_04_03_18.p"
-phonemeInputFileName =  "phonemes_04_03_18.p"
-rhymeProbsInputFileName ="rhymeProbs_04_03_18.p"
+debug = False
+if debug:
+	inputFileName =  "revTriChain_04_03_18.p"
+	rhymeInputFileName =  "rhymes_04_03_18.p"
+	phonemeInputFileName =  "phonemes_04_03_18.p"
+	rhymeProbsInputFileName ="rhymeProbs_04_03_18.p"
+else:
+	inputFileName =  "revTriChainBig.p"
+	rhymeInputFileName =  "rhymesBig.p"
+	phonemeInputFileName =  "phonemesBig.p"
+	rhymeProbsInputFileName ="rhymeProbs_04_03_18.p"
 maxlines = 8 #How many lines should the program write?
 maxwords = 15#What's the maximum amount of words in a line before it cuts off
 ChanceOfMostRealisticChain = 0#this is how likely you want the program to run the maximum likeliness generation method rather than the weighted random generation method
 SeedWordMethod = 0 #0 is completely random String seed tuple, and 1 is a weighted random seed tuple
-nextRhymeMethod = 1 #0 is completely random end word, and 1 is a weighted random end word
+nextRhymeMethod = 0 #0 is completely random end word, and 1 is a weighted random end word
 #SETTINGS#
 startTuple = ("#","yes")
 dict1 = pickle.load( open(inputFileName, "rb" ) )					#Reversed TriChain
@@ -32,19 +39,28 @@ bigrams = list(dict1.keys())
 endWords = list(phonemeDict.keys())
 initSeed = 1
 
-def rhymeTime(previousWord):
+#choose new rhyme based of previous word from main loop
+def rhymeTime(previousWord):	#
 	previousPhoneme = phonemeDict[previousWord[1]]
 	#print (previousPhoneme)	#derive the sound at the end of the previous 
 	if nextRhymeMethod == 0:
 		nextWord = random.choice(rhymeDict[previousPhoneme])	#choose a rhyming word completely randomly!
 	else:
-		total = sum(rhymeProbs[previousPhoneme].values()) #Weighted random probability!!
+		total = 0 #Weighted random probability!!
+		
 		p = random.random()
 		cumulativeProbability = 0.0
-		for key, value in rhymeProbs[previousPhoneme].items():
-			cumulativeProbability += (value/total)
+		for word in rhymeDict[previousPhoneme]:		#create list of rhyming end words from corpus
+			total += rhymeProbs[word]		#The total is the sum of all the probabilities of the  words that rhyme with PreviousWord
+		#print("Total is = "+ str(total))
+		for word in rhymeDict[previousPhoneme]: 	#create list of rhyming end words from corpus
+			endProb = rhymeProbs[word]		#Now retrieve the probability for each end word
+			cumulativeProbability += (endProb/total)
+			#print("Current probability ratio "+ str(endProb/total))
+			#print("cumulativeProbability ="+ str(cumulativeProbability))
 			if (p <= cumulativeProbability):
-				nextWord = key
+				nextWord = word
+
 	nextTuple = ('#',nextWord)
 	return nextTuple
 def startRhyme(startPhoneme):	#NOT IN USE
