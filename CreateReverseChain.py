@@ -12,9 +12,13 @@ import pprint
 import codecs,os,subprocess
 #SETTINGS#
 #create corpus from certain artists, the artist's names are in 3 letter combinations, eg. KEN for kendrick Llamar
+debug = False
 artistNames = [".txt"]
 ipaVowels=['i','u','a','i','ɪ','e','ɛ','æ','a','ə','ɑ','ɒ','ɔ','ʌ','o','ʊ','u','y','ʏ','ø','œ','ɐ','ɜ','ɞ','ɘ','ɵ','ʉ','ɨ','ɤ','ɯ']
-path = '/Users/darius/Documents/ComSci2/project4/lyricsmode'
+if debug:
+	path = '/Users/darius/Documents/ComSci2/project4/lyricsmode'
+else:
+	path = '/Users/darius/Downloads/lyricsModesmaller'
 outputFileName = "triChain_04_03_18.p"
 reverseOutputFileName = "revTriChain_04_03_18.p"
 phonemeOutputFileName = "phonemes_04_03_18.p"	#key: word, value: phoneme
@@ -84,7 +88,8 @@ def revCount(line):
 		#print(word3 +" "+ word2 +" "+ word1)
 		#the first 2 words in the trigram become the tuple key
 		if not word1 or not word2 or not word3 or word1 == "'" or word2 == "'" or word3 == "'": 	#is one of the keys an empty string?
-			print(word1 + " " + word2  + " " + word3 )
+			if debug:
+				print(word1 + " " + word2  + " " + word3 )
 			continue	#dont add it to the dictionary
 		else:	
 			key = (word1, word2)
@@ -208,9 +213,10 @@ for filename in os.listdir(path):
 	fileCount += 1
 	#when building, count every 100 files
 	if (fileCount % 100 == 0):
-		print(str(fileCount))
-		chainSize = sys.getsizeof(forwardDict)
-		print('Chain size = ' + str(chainSize))
+		if debug:
+			print(str(fileCount))
+			chainSize = sys.getsizeof(forwardDict)
+			print('Chain size = ' + str(chainSize))
 
 print("converting to probabilities")
 #for every key in the main dictionary, convert the respective count into a probability.

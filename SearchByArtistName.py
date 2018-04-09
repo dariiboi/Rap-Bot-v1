@@ -10,22 +10,13 @@ import random
 import fnmatch
 import pprint
 import codecs,os,subprocess
-
-path = '/Users/darius/Downloads/lyricsModesmaller'
+ArtistRestriction = 0 
+artistNames = [".txt"]
+path = '/Users/darius/Downloads/lyricsModesmaller'	
 #look thru path for files
 for filename in os.listdir(path):
 	myfile = ''
-	
-	if ArtistRestriction == 1: 
-		for i in artistNames: #is the artist in the filename??
-			if i in filename:
-				myfile = path+"/"+filename	#create file path
-				continue
-		if myfile == '':
-			continue
-	else:
-		myfile = path+"/"+filename	#create file path
-	#print(myfile)
+	myfile = path+"/"+filename	#create file path
 	pretext = ''
 	t= ''
 	t2= u''	
@@ -59,3 +50,24 @@ for filename in os.listdir(path):
 			t = rawfile.read()
 		except:
 			print("badfile2 :"+ myfile)
+	lines = t.split('\n')	#split text file into lines
+	for line in lines:
+		if line.startswith('Artist:') or line.startswith('artist:'):	#find the lines where they say who the artist is
+			line = re.sub('Artist:','',line)
+			if 'f/' in line:
+				name = line.split('f/', 1)[0]	#remove the features from the artist name
+				break
+			if 'feat' in line:
+				name = line.split('feat', 1)[0]	#remove the features from the artist name
+				break	
+			else:
+				name = line
+				break
+	if name[-1] == ' ':
+		name = name[:-1]		#remove space from after artist name
+	if name[0] == ' ':
+		name = name[1:]		#remove space from after artist name
+	if name[0] == '	':
+		name = name[1:]		#remove space from after artist name
+	print (name)
+

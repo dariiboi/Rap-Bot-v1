@@ -8,7 +8,7 @@ import sys,codecs,os,subprocess
 import pprint
 import re
 #SETTINGS#
-debug = False
+debug = True
 if debug:
 	inputFileName =  "revTriChain_04_03_18.p"
 	rhymeInputFileName =  "rhymes_04_03_18.p"
@@ -20,12 +20,12 @@ else:
 	phonemeInputFileName =  "phonemesBig.p"
 	rhymeProbsInputFileName ="rhymeProbs_04_03_18.p"
 maxlines = 8 #How many lines should the program write?
-maxwords = 15#What's the maximum amount of words in a line before it cuts off
-ChanceOfMostRealisticChain = 0#this is how likely you want the program to run the maximum likeliness generation method rather than the weighted random generation method
-SeedWordMethod = 0 #0 is completely random String seed tuple, and 1 is a weighted random seed tuple
-nextRhymeMethod = 0 #0 is completely random end word, and 1 is a weighted random end word
+maxwords = 10#What's the maximum amount of words in a line before it cuts off
+ChanceOfMostRealisticChain = 0.2y#this is how likely you want the program to run the maximum likeliness generation method rather than the weighted random generation method
+SeedWordMethod = 1 #0 is completely random String seed tuple, and 1 is a weighted random seed tuple
+nextRhymeMethod = 1 #0 is completely random end word, and 1 is a weighted random end word
 #SETTINGS#
-startTuple = ("#","yes")
+startTuple = ("#","dick")
 dict1 = pickle.load( open(inputFileName, "rb" ) )					#Reversed TriChain
 rhymeDict = pickle.load( open(rhymeInputFileName, "rb" ) )			#RHYMES
 phonemeDict = pickle.load( open(phonemeInputFileName, "rb" ) )		#InitPhonemes
@@ -46,8 +46,7 @@ def rhymeTime(previousWord):	#
 	if nextRhymeMethod == 0:
 		nextWord = random.choice(rhymeDict[previousPhoneme])	#choose a rhyming word completely randomly!
 	else:
-		total = 0 #Weighted random probability!!
-		
+		total = 0 #Weighted random probability!!	
 		p = random.random()
 		cumulativeProbability = 0.0
 		for word in rhymeDict[previousPhoneme]:		#create list of rhyming end words from corpus
@@ -60,7 +59,7 @@ def rhymeTime(previousWord):	#
 			#print("cumulativeProbability ="+ str(cumulativeProbability))
 			if (p <= cumulativeProbability):
 				nextWord = word
-
+				break
 	nextTuple = ('#',nextWord)
 	return nextTuple
 def startRhyme(startPhoneme):	#NOT IN USE
@@ -110,10 +109,10 @@ def firstTuple (method):
 		#return ('#',random.choice(startWords))
 		return ('#',random.choice(endWords))
 	if method == 1:
-		total = sum(startDict.values())
+		total = sum(rhymeProbs.values())
 		cumulativeProbability = 0.0
 		p = random.random()
-		for key, value in startDict.items():
+		for key, value in rhymeProbs.items():
 				cumulativeProbability += (value/total)
 				if (p <= cumulativeProbability):
 					return (key)
