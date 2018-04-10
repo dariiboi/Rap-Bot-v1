@@ -12,6 +12,7 @@ import pprint
 import codecs,os,subprocess
 ArtistRestriction = 0 
 artistNames = [".txt"]
+artistDict = {} #Where we can cross reference artist name and text file
 path = '/Users/darius/Downloads/lyricsModesmaller'	
 #look thru path for files
 for filename in os.listdir(path):
@@ -64,10 +65,14 @@ for filename in os.listdir(path):
 				name = line
 				break
 	if name[-1] == ' ':
-		name = name[:-1]		#remove space from after artist name
+		name = name[:-1]		#remove space from before artist name
 	if name[0] == ' ':
 		name = name[1:]		#remove space from after artist name
-	if name[0] == '	':
-		name = name[1:]		#remove space from after artist name
-	print (name)
+	if name in artistDict:
+		artistDict[name].append(myfile)
+	else:
+		artistDict[name] = []
+		artistDict[name].append(myfile)
+print (artistDict)
+
 
