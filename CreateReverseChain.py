@@ -10,11 +10,18 @@ import random
 import fnmatch
 import pprint
 import codecs,os,subprocess
+import io
 #SETTINGS#
 #create corpus from certain artists, the artist's names are in 3 letter combinations, eg. KEN for kendrick Llamar
 debug = False
-artistNames = [".txt"]
+ArtistRestriction = True #Does the code select from a list of artists, or make a chain out the the entire corpus
+artistNames = []
 ipaVowels=['i','u','a','i','ɪ','e','ɛ','æ','a','ə','ɑ','ɒ','ɔ','ʌ','o','ʊ','u','y','ʏ','ø','œ','ɐ','ɜ','ɞ','ɘ','ɵ','ʉ','ɨ','ɤ','ɯ']
+#regionFile = open('/Users/darius/Documents/eastCoastArtists.txt')
+with io.open('/Users/darius/Documents/eastCoastArtists.txt', 'r',encoding="utf-8") as myfile:
+	regionFile = myfile.read()
+regionList = regionFile.split('\n')
+#print (regionList)
 if debug:
 	path = '/Users/darius/Documents/ComSci2/project4/lyricsmode'
 else:
@@ -24,7 +31,8 @@ reverseOutputFileName = "revTriChain_04_03_18.p"
 phonemeOutputFileName = "phonemes_04_03_18.p"	#key: word, value: phoneme
 rhymeOutputFileName = "rhymes_04_03_18.p"	#key: phoneme, value: list of words
 rhymeProbsFileName = "rhymeProbs_04_03_18.p"	#key: phoneme, value: list of words
-ArtistRestriction = 0 #Does the code select from a list of artists, or make a chain out the the entire corpus
+inputFileName = 'artistDict1.p'
+artistDict = pickle.load( open(inputFileName, "rb" ) )
 #SETTINGS#
 
 
@@ -40,6 +48,20 @@ rhymeDict = {}
 words = []
 endWordCount = 0.0
 wordCount = 0.0
+#remove whitespaces, punctuation, uppercase from lists of artist names
+def normalizeStrings(artistList):
+	for t in artistList:
+		t = t.lower()
+		t = re.sub("[\(\[].*?[\)\]]", "", t)
+		t = re.sub("[éêè]",'e',t)
+		t = re.sub("[^a-z0-9' \n]*", "", t)
+#look through all artist files for artist names and choose the files that contain the artist's name
+def chooseArtists(artistList):	
+	for wikiName in artistList:		#look thru all of the artists in the list
+		for corpusName in artistDict.keys():		#
+			if wikiName == corpusName:
+				artistNames.append(artistDict[name])
+	print(artistNames)			
 #take words and split them into a 3 part trigram
 def generateTrigram(words):
     if len(words) < 3: #unless the line has less than 3 words tho
@@ -142,9 +164,10 @@ fileCount = 0
 for filename in os.listdir(path):
 	myfile = ''
 	
-	if ArtistRestriction == 1: 
-		for i in artistNames: #is the artist in the filename??
-			if i in filename:
+	if ArtistRestriction == True: 
+		chooseArtists(regionList)
+		for file in artistNames: #for all the files in the subdivision of artist files (eg west coast artists)
+			if filename == file:	#for every file in the main folder that matches a file in the subsection of area-specific artists:
 				myfile = path+"/"+filename	#create file path
 				continue
 		if myfile == '':

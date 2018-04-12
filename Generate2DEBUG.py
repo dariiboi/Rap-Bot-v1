@@ -21,11 +21,11 @@ else:
 	rhymeProbsInputFileName ="rhymeProbs_04_03_18.p"
 maxlines = 8 #How many lines should the program write?
 maxwords = 10#What's the maximum amount of words in a line before it cuts off
-ChanceOfMostRealisticChain = 0.2y#this is how likely you want the program to run the maximum likeliness generation method rather than the weighted random generation method
+ChanceOfMostRealisticChain = 0.3#this is how likely you want the program to run the maximum likeliness generation method rather than the weighted random generation method
 SeedWordMethod = 1 #0 is completely random String seed tuple, and 1 is a weighted random seed tuple
 nextRhymeMethod = 1 #0 is completely random end word, and 1 is a weighted random end word
 #SETTINGS#
-startTuple = ("#","dick")
+startTuple = ("#","peach")
 dict1 = pickle.load( open(inputFileName, "rb" ) )					#Reversed TriChain
 rhymeDict = pickle.load( open(rhymeInputFileName, "rb" ) )			#RHYMES
 phonemeDict = pickle.load( open(phonemeInputFileName, "rb" ) )		#InitPhonemes
@@ -115,7 +115,7 @@ def firstTuple (method):
 		for key, value in rhymeProbs.items():
 				cumulativeProbability += (value/total)
 				if (p <= cumulativeProbability):
-					return (key)
+					return ('#',key)
 
 
 #
@@ -132,7 +132,7 @@ for i in range(maxlines):
 		output.append(startTuple[1])		#add the last word in the line to output
 		prevTuple=startTuple		
 	else:
-		if i % 2:
+		if i % 4:
 			A = A
 		else:
 			A = not A

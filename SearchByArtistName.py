@@ -15,6 +15,7 @@ artistNames = [".txt"]
 artistDict = {} #Where we can cross reference artist name and text file
 path = '/Users/darius/Downloads/lyricsModesmaller'	
 #look thru path for files
+outputFileName = "artistDict1.p"
 for filename in os.listdir(path):
 	myfile = ''
 	myfile = path+"/"+filename	#create file path
@@ -74,5 +75,5 @@ for filename in os.listdir(path):
 		artistDict[name] = []
 		artistDict[name].append(myfile)
 print (artistDict)
-
+pickle.dump( artistDict, open( outputFileName, "wb" ))	
 
