@@ -15,7 +15,7 @@ import io
 #create corpus from certain artists, the artist's names are in 3 letter combinations, eg. KEN for kendrick Llamar
 debug = False
 ArtistRestriction = True #Does the code select from a list of artists, or make a chain out the the entire corpus
-artistNames = []
+artistFiles = []
 ipaVowels=['i','u','a','i','ɪ','e','ɛ','æ','a','ə','ɑ','ɒ','ɔ','ʌ','o','ʊ','u','y','ʏ','ø','œ','ɐ','ɜ','ɞ','ɘ','ɵ','ʉ','ɨ','ɤ','ɯ']
 #regionFile = open('/Users/darius/Documents/eastCoastArtists.txt')
 with io.open('/Users/darius/Documents/eastCoastArtists.txt', 'r',encoding="utf-8") as myfile:
@@ -33,8 +33,6 @@ rhymeOutputFileName = "rhymes_04_03_18.p"	#key: phoneme, value: list of words
 rhymeProbsFileName = "rhymeProbs_04_03_18.p"	#key: phoneme, value: list of words
 inputFileName = 'artistDict1.p'
 artistDict = pickle.load( open(inputFileName, "rb" ) )
-#SETTINGS#
-
 
 #CODE#
 sys.getdefaultencoding()
@@ -49,19 +47,22 @@ words = []
 endWordCount = 0.0
 wordCount = 0.0
 #remove whitespaces, punctuation, uppercase from lists of artist names
-def normalizeStrings(artistList):
-	for t in artistList:
-		t = t.lower()
-		t = re.sub("[\(\[].*?[\)\]]", "", t)
-		t = re.sub("[éêè]",'e',t)
-		t = re.sub("[^a-z0-9' \n]*", "", t)
+def normalizeStrings(t):
+	t = t.lower()	#ALL LOWERCASE
+	t = re.sub("[\(\[].*?[\)\]]", "", t)	#NO PUNCTUATION
+	t = re.sub("[éêè]",'e',t)
+	t = re.sub("[^a-z0-9' \n]*", "", t)
+	t = re.sub("\s+", "", t.strip())
+	return(t)
 #look through all artist files for artist names and choose the files that contain the artist's name
 def chooseArtists(artistList):	
 	for wikiName in artistList:		#look thru all of the artists in the list
-		for corpusName in artistDict.keys():		#
-			if wikiName == corpusName:
-				artistNames.append(artistDict[name])
-	print(artistNames)			
+		for corpusName in artistDict.keys():
+			normCorpusName = normalizeStrings(corpusName)	#normalize the names of the artists in the dictionary of artistnames
+			normWikiName = normalizeStrings(wikiName)	#normalize the names of the artists from my wikipedia-derived regional list
+			if normWikiName in normCorpusName:	#if there's a match between the two....
+				artistFiles.extend(artistDict[corpusName])	#append the list to include
+	print(artistFiles)			
 #take words and split them into a 3 part trigram
 def generateTrigram(words):
     if len(words) < 3: #unless the line has less than 3 words tho
@@ -166,7 +167,7 @@ for filename in os.listdir(path):
 	
 	if ArtistRestriction == True: 
 		chooseArtists(regionList)
-		for file in artistNames: #for all the files in the subdivision of artist files (eg west coast artists)
+		for file in artistFiles: #for all the files in the subdivision of artist files (eg west coast artists)
 			if filename == file:	#for every file in the main folder that matches a file in the subsection of area-specific artists:
 				myfile = path+"/"+filename	#create file path
 				continue

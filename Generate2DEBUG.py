@@ -25,7 +25,7 @@ ChanceOfMostRealisticChain = 0.3#this is how likely you want the program to run 
 SeedWordMethod = 1 #0 is completely random String seed tuple, and 1 is a weighted random seed tuple
 nextRhymeMethod = 1 #0 is completely random end word, and 1 is a weighted random end word
 #SETTINGS#
-startTuple = ("#","peach")
+startTuple = ("#","bitch")
 dict1 = pickle.load( open(inputFileName, "rb" ) )					#Reversed TriChain
 rhymeDict = pickle.load( open(rhymeInputFileName, "rb" ) )			#RHYMES
 phonemeDict = pickle.load( open(phonemeInputFileName, "rb" ) )		#InitPhonemes
