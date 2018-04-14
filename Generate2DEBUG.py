@@ -7,25 +7,28 @@ import operator
 import sys,codecs,os,subprocess
 import pprint
 import re
+from textstat.textstat import textstat
+
 #SETTINGS#
-debug = True
+debug = False
 if debug:
+
 	inputFileName =  "revTriChain_04_03_18.p"
 	rhymeInputFileName =  "rhymes_04_03_18.p"
 	phonemeInputFileName =  "phonemes_04_03_18.p"
 	rhymeProbsInputFileName ="rhymeProbs_04_03_18.p"
 else:
-	inputFileName =  "revTriChainBig.p"
-	rhymeInputFileName =  "rhymesBig.p"
-	phonemeInputFileName =  "phonemesBig.p"
-	rhymeProbsInputFileName ="rhymeProbs_04_03_18.p"
+	inputFileName =  "revTriChain_east_coast_small.p"
+	rhymeInputFileName =  "rhymes_east_coast_small.p"
+	phonemeInputFileName =  "phonemes_east_coast_small.p"
+	rhymeProbsInputFileName ="rhymeProbs_east_coast_small.p"
 maxlines = 8 #How many lines should the program write?
 maxwords = 10#What's the maximum amount of words in a line before it cuts off
-ChanceOfMostRealisticChain = 0.3#this is how likely you want the program to run the maximum likeliness generation method rather than the weighted random generation method
+ChanceOfMostRealisticChain = 0.25#this is how likely you want the program to run the maximum likeliness generation method rather than the weighted random generation method
 SeedWordMethod = 1 #0 is completely random String seed tuple, and 1 is a weighted random seed tuple
 nextRhymeMethod = 1 #0 is completely random end word, and 1 is a weighted random end word
 #SETTINGS#
-startTuple = ("#","bitch")
+startTuple = ("#","retard")
 dict1 = pickle.load( open(inputFileName, "rb" ) )					#Reversed TriChain
 rhymeDict = pickle.load( open(rhymeInputFileName, "rb" ) )			#RHYMES
 phonemeDict = pickle.load( open(phonemeInputFileName, "rb" ) )		#InitPhonemes
@@ -173,7 +176,8 @@ for i in range(maxlines):
 	#print (nextTuple)
 	#print (firstLine)
 	output.pop()
-	print(' '.join(reversed(output)))
+	joinedOutput = ' '.join(reversed(output))
+	print(joinedOutput)
 	output = []
 
 	

@@ -26,11 +26,11 @@ if debug:
 	path = '/Users/darius/Documents/ComSci2/project4/lyricsmode'
 else:
 	path = '/Users/darius/Downloads/lyricsModesmaller'
-outputFileName = "triChain_04_03_18.p"
-reverseOutputFileName = "revTriChain_04_03_18.p"
-phonemeOutputFileName = "phonemes_04_03_18.p"	#key: word, value: phoneme
-rhymeOutputFileName = "rhymes_04_03_18.p"	#key: phoneme, value: list of words
-rhymeProbsFileName = "rhymeProbs_04_03_18.p"	#key: phoneme, value: list of words
+outputFileName = "triChain_east_coast_small.p"
+reverseOutputFileName = "revTriChain_east_coast_small.p"
+phonemeOutputFileName = "phonemes_east_coast_small.p"	#key: word, value: phoneme
+rhymeOutputFileName = "rhymes_east_coast_small.p"	#key: phoneme, value: list of words
+rhymeProbsFileName = "rhymeProbs_east_coast_small.p"	#key: phoneme, value: list of words
 inputFileName = 'artistDict1.p'
 artistDict = pickle.load( open(inputFileName, "rb" ) )
 
@@ -61,8 +61,9 @@ def chooseArtists(artistList):
 			normCorpusName = normalizeStrings(corpusName)	#normalize the names of the artists in the dictionary of artistnames
 			normWikiName = normalizeStrings(wikiName)	#normalize the names of the artists from my wikipedia-derived regional list
 			if normWikiName in normCorpusName:	#if there's a match between the two....
-				artistFiles.extend(artistDict[corpusName])	#append the list to include
-	print(artistFiles)			
+				artistFiles.extend(artistDict[corpusName])	#append the list to include the file of the regional artist
+				print(normWikiName)
+			
 #take words and split them into a 3 part trigram
 def generateTrigram(words):
     if len(words) < 3: #unless the line has less than 3 words tho
@@ -160,16 +161,16 @@ def final2Phonemes(token):	#rhyming function
 		return None
 
 fileCount = 0
-
+chooseArtists(regionList)
+print(artistFiles)
 #look thru path for files
 for filename in os.listdir(path):
 	myfile = ''
 	
 	if ArtistRestriction == True: 
-		chooseArtists(regionList)
 		for file in artistFiles: #for all the files in the subdivision of artist files (eg west coast artists)
-			if filename == file:	#for every file in the main folder that matches a file in the subsection of area-specific artists:
-				myfile = path+"/"+filename	#create file path
+			if file == path+"/"+filename:
+				myfile = file
 				continue
 		if myfile == '':
 			continue
@@ -257,7 +258,7 @@ for key in reverseDict:
 	myCount += 1
 	if key[0] == '#':			#is this a final word?
 		endWordCount += 1
-		#print("phoneme dictionary in process "  + key[1] + " at " + str(myCount) + " of " + str(numKeys))
+		print("phoneme dictionary in process "  + key[1] + " at " + str(myCount) + " of " + str(numKeys))
 		finalPhoneme = final2Phonemes(key[1])	#iteratate thru all phonemes and return them as keys to the Phoneme dictionary
 		if finalPhoneme is None:
 			print("Espeak failed on " + key[1])		#give the key on which espeak failed
