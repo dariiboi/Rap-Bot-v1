@@ -131,7 +131,7 @@ def revCount(line):
 				reverseDict[key][word3] = 1.0
 			
 def final2Phonemes(token):	#rhyming function
-	CMD='speak -q --ipa '+token
+	CMD='speak -q --ipa -v en-us'+token
 	#print CMD
 	try:
 		phoneme = subprocess.check_output(CMD.split()).strip()

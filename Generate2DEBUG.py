@@ -24,11 +24,12 @@ else:
 	rhymeProbsInputFileName ="rhymeProbs_east_coast_small.p"
 maxlines = 8 #How many lines should the program write?
 maxwords = 10#What's the maximum amount of words in a line before it cuts off
-ChanceOfMostRealisticChain = 0.25#this is how likely you want the program to run the maximum likeliness generation method rather than the weighted random generation method
+syllableRange = (9,12) #The minimum, then maximum amount of syllables you want in a line
+ChanceOfMostRealisticChain = 0.8#this is how likely you want the program to run the maximum likeliness generation method rather than the weighted random generation method
 SeedWordMethod = 1 #0 is completely random String seed tuple, and 1 is a weighted random seed tuple
 nextRhymeMethod = 1 #0 is completely random end word, and 1 is a weighted random end word
 #SETTINGS#
-startTuple = ("#","retard")
+startTuple = ("#","pop")
 dict1 = pickle.load( open(inputFileName, "rb" ) )					#Reversed TriChain
 rhymeDict = pickle.load( open(rhymeInputFileName, "rb" ) )			#RHYMES
 phonemeDict = pickle.load( open(phonemeInputFileName, "rb" ) )		#InitPhonemes
@@ -120,39 +121,43 @@ def firstTuple (method):
 				if (p <= cumulativeProbability):
 					return ('#',key)
 
-
-#
 # Main Loop  to generate lines
 #
 #
 BTuple = firstTuple(SeedWordMethod)		#genereate random B rhyme
 output = []
-A = True
+A = True	#The modifier for switching lines
+
 for i in range(maxlines):
 	j = 0	
-	
+	syllCount = 0 #start the syllable counter at 0 for every line
 	if i == 0:
 		output.append(startTuple[1])		#add the last word in the line to output
 		prevTuple=startTuple		
 	else:
-		if i % 4:
+		if i % 2:	#change rhyme scheme every x lines
 			A = A
 		else:
 			A = not A
-		if A == False:
+		if A == False:	#Start B rhymeScheme
 			prevTuple=nextBTuple
 			output.append(nextBTuple[1])
-		else:
+		else:	#Start A rhyme scheme
 			prevTuple=nextTuple
 			output.append(nextTuple[1])
-	
-	while j < maxwords:
-
+	syllCount += textstat.syllable_count(prevTuple[1])
+	lineDoesntHaveCorrectNumOfSyllables = True
+	originalPrevTuple = prevTuple
+	loopExitCounter = 0 #This counts up every time a line is re-written to fit the syllable constraints. If it reaches 20, a new prevTuple is randomly selected
+	while lineDoesntHaveCorrectNumOfSyllables:	# self explanitory
+	#while j < maxwords:
 		j +=1
 		if random.random() < ChanceOfMostRealisticChain: 	#random.random spits out a number between 1 and 0. 
 			#BUG: reverse chain has no keys that are (word, hash)
 			newWord = max(dict1[prevTuple].items(), key=operator.itemgetter(1))[0]	#this is where the new word is decided as the most likely based on the second value of the tuple
 			debugProbs = (sorted(dict1[prevTuple].items(),key=operator.itemgetter(1),reverse=True))		#debug: display a sorted list of the most likely following tuples
+			#if syllCount > syllableRange[1]:
+
 		else: 
 			#newWord = min(dict1[prevTuple].items(), key=operator.itemgetter(1))[0]
 			total = sum(dict1[prevTuple].values()) 
@@ -164,13 +169,27 @@ for i in range(maxlines):
 					newWord = key
 					#print(' '+ str(value/total)+ ' ')
 					break
-
+		syllCount += textstat.syllable_count(newWord)
 		prevTuple = (prevTuple[1],newWord)
 		output.append(newWord)
+		#print(output)
 		#pprint.pprint(newWord)
 		#pprint.pprint(debugProbs)	#PRINT A DEBUG. Show the second, third, forth, etc. most likely words to follow. 
-		if newWord == '$' :		
-			break
+		#print(output, syllCount)
+		if newWord == '$':
+			if syllCount >= syllableRange[0] and syllCount < syllableRange[1] :		
+				lineDoesntHaveCorrectNumOfSyllables = False
+			else:
+				loopExitCounter += 1
+				output = []
+				prevTuple = originalPrevTuple
+				output.append(prevTuple[1])
+				syllCount = 0	
+				if loopExitCounter >= 30:	#after 30 repetitions of unsucessful syllable countings
+					#print('reset init word')
+					prevTuple = firstTuple(SeedWordMethod)
+					loopExitCounter = 0
+
 	nextTuple = rhymeTime(startTuple)
 	nextBTuple = rhymeTime(BTuple)
 	#print (nextTuple)
