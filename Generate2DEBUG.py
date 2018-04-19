@@ -8,7 +8,9 @@ import sys,codecs,os,subprocess
 import pprint
 import re
 from textstat.textstat import textstat
-
+import argparse
+parser = argparse.ArgumentParser()
+parser.parse_args()
 #SETTINGS#
 debug = False
 if debug:
@@ -24,12 +26,12 @@ else:
 	rhymeProbsInputFileName ="rhymeProbs_east_coast_small.p"
 maxlines = 8 #How many lines should the program write?
 maxwords = 10#What's the maximum amount of words in a line before it cuts off
-syllableRange = (9,12) #The minimum, then maximum amount of syllables you want in a line
-ChanceOfMostRealisticChain = 0.8#this is how likely you want the program to run the maximum likeliness generation method rather than the weighted random generation method
+syllableRange = (9,10) #The minimum, then maximum amount of syllables you want in a line
+ChanceOfMostRealisticChain = 0.6#this is how likely you want the program to run the maximum likeliness generation method rather than the weighted random generation method
 SeedWordMethod = 1 #0 is completely random String seed tuple, and 1 is a weighted random seed tuple
 nextRhymeMethod = 1 #0 is completely random end word, and 1 is a weighted random end word
 #SETTINGS#
-startTuple = ("#","pop")
+startTuple = ("#","boy")
 dict1 = pickle.load( open(inputFileName, "rb" ) )					#Reversed TriChain
 rhymeDict = pickle.load( open(rhymeInputFileName, "rb" ) )			#RHYMES
 phonemeDict = pickle.load( open(phonemeInputFileName, "rb" ) )		#InitPhonemes

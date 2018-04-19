@@ -16,7 +16,7 @@ import io
 debug = False
 ArtistRestriction = True #Does the code select from a list of artists, or make a chain out the the entire corpus
 artistFiles = []
-ipaVowels=['i','u','a','i','ɪ','e','ɛ','æ','a','ə','ɑ','ɒ','ɔ','ʌ','o','ʊ','u','y','ʏ','ø','œ','ɐ','ɜ','ɞ','ɘ','ɵ','ʉ','ɨ','ɤ','ɯ']
+ipaVowels=['ɚ','i','u','a','i','ɪ','e','ɛ','æ','a','ə','ɑ','ɒ','ɔ','ʌ','o','ʊ','u','y','ʏ','ø','œ','ɐ','ɜ','ɞ','ɘ','ɵ','ʉ','ɨ','ɤ','ɯ']
 #regionFile = open('/Users/darius/Documents/eastCoastArtists.txt')
 with io.open('/Users/darius/Documents/eastCoastArtists.txt', 'r',encoding="utf-8") as myfile:
 	regionFile = myfile.read()
