@@ -8,7 +8,12 @@ import sys,codecs,os,subprocess
 import pprint
 import re
 from textstat.textstat import textstat
-
+import argparse
+# ARGUMENTS
+parser = argparse.ArgumentParser()
+parser.add_argument("seed", help="The seed word in the rhyme")	
+args = parser.parse_args()
+print(args.seed)
 
 
 #SETTINGS#
@@ -31,7 +36,7 @@ ChanceOfMostRealisticChain = 0.6#this is how likely you want the program to run 
 SeedWordMethod = 1 #0 is completely random String seed tuple, and 1 is a weighted random seed tuple
 nextRhymeMethod = 1 #0 is completely random end word, and 1 is a weighted random end word
 #SETTINGS#
-startTuple = ("#","boy")
+startTuple = ("#",args.seed)	#THE LAST WORD OF THE FIRST LINE. This is input from the command line
 dict1 = pickle.load( open(inputFileName, "rb" ) )					#Reversed TriChain
 rhymeDict = pickle.load( open(rhymeInputFileName, "rb" ) )			#RHYMES
 phonemeDict = pickle.load( open(phonemeInputFileName, "rb" ) )		#InitPhonemes
