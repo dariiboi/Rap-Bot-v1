@@ -7,6 +7,7 @@ import operator
 import sys,codecs,os,subprocess
 import pprint
 import re
+
 from textstat.textstat import textstat
 
 
@@ -31,7 +32,7 @@ ChanceOfMostRealisticChain = 0.6#this is how likely you want the program to run 
 SeedWordMethod = 1 #0 is completely random String seed tuple, and 1 is a weighted random seed tuple
 nextRhymeMethod = 1 #0 is completely random end word, and 1 is a weighted random end word
 #SETTINGS#
-startTuple = ("#","boy")
+startTuple = ("#","alas")
 dict1 = pickle.load( open(inputFileName, "rb" ) )					#Reversed TriChain
 rhymeDict = pickle.load( open(rhymeInputFileName, "rb" ) )			#RHYMES
 phonemeDict = pickle.load( open(phonemeInputFileName, "rb" ) )		#InitPhonemes
