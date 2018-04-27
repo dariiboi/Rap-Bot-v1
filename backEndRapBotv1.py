@@ -93,6 +93,7 @@ class RapBot():
 		self.ChanceOfMostRealisticChain = ChanceOfMostRealisticChain
 		self.seedWord = seedWord
 		startTuple = ("#",seedWord)	#THE LAST WORD OF THE FIRST LINE. This is input in the url
+		print(syllableRange)
 		BTuple = self.firstTuple(SeedWordMethod, self.rhymeProbs)		#genereate random B rhyme
 		output = []
 		A = True	#The modifier for switching lines

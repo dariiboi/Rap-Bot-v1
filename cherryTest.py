@@ -11,9 +11,10 @@ class StringGenerator(object):
 		return "Hello world!"
 
 	@cherrypy.expose
-	def generate(self, SeedWordMethod = 1, maxLines = 8, rhymeScheme = 2, syllableRange = 9, ChanceOfMostRealisticChain = 0.6, seedWord = 'boy'):
+	def generate(self, SeedWordMethod = 1, maxLines = 8, rhymeScheme = 2, syllableRange = 9, ChanceOfMostRealisticChain = 0.7, seedWord = 'boy'):
 		output = myRapBot.generate(int(SeedWordMethod), int(maxLines), int(rhymeScheme), (int(syllableRange),int(syllableRange)+1), float(ChanceOfMostRealisticChain), seedWord)
-		return output
+		splitOutput = "<br/>".join(output)
+		return splitOutput
 
 
 if __name__ == '__main__':
