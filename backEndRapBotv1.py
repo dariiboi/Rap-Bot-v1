@@ -166,7 +166,7 @@ class RapBot():
 			#print (firstLine)
 			output.pop()
 			joinedOutput = ' '.join(reversed(output))
-			finalOutput.append(joinedOutput+ "\n")
+			finalOutput.append(joinedOutput)
 			output = []
 		return(finalOutput)
 
