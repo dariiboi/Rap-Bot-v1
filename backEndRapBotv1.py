@@ -93,6 +93,9 @@ class RapBot():
 		self.ChanceOfMostRealisticChain = ChanceOfMostRealisticChain
 		self.seedWord = seedWord
 		startTuple = ("#",seedWord)	#THE LAST WORD OF THE FIRST LINE. This is input in the url
+		if startTuple not in self.dict1: 
+			output = {None,"fail"}
+			return output
 		print(syllableRange)
 		BTuple = self.firstTuple(SeedWordMethod, self.rhymeProbs)		#genereate random B rhyme
 		output = []
@@ -105,7 +108,7 @@ class RapBot():
 				output.append(startTuple[1])		#add the last word in the line to output
 				prevTuple=startTuple		
 			else:
-				if i % 2:	#change rhyme scheme every x lines
+				if i % rhymeScheme:	#change rhyme scheme every x lines
 					A = A
 				else:
 					A = not A
@@ -141,6 +144,7 @@ class RapBot():
 							break
 				syllCount += textstat.syllable_count(newWord)
 				prevTuple = (prevTuple[1],newWord)
+				
 				output.append(newWord)
 				#print(output)
 				#pprint.pprint(newWord)
@@ -168,7 +172,9 @@ class RapBot():
 			joinedOutput = ' '.join(reversed(output))
 			finalOutput.append(joinedOutput)
 			output = []
-		return(finalOutput)
+			#trueOutput = {"error": "pass", "output":finalOutput}
+
+		return(finalOutput,"pass")
 
 			
 

@@ -12,9 +12,12 @@ class StringGenerator(object):
 
 	@cherrypy.expose
 	def generate(self, SeedWordMethod = 1, maxLines = 8, rhymeScheme = 2, syllableRange = 9, ChanceOfMostRealisticChain = 0.7, seedWord = 'boy'):
-		output = myRapBot.generate(int(SeedWordMethod), int(maxLines), int(rhymeScheme), (int(syllableRange),int(syllableRange)+1), float(ChanceOfMostRealisticChain), seedWord)
+		lines , errorVal = myRapBot.generate(int(SeedWordMethod), int(maxLines), int(rhymeScheme), (int(syllableRange),int(syllableRange)+1), float(ChanceOfMostRealisticChain), seedWord)
+		print(errorVal)
+		response = {"error" : errorVal,
+					"output" : lines}
 		#splitOutput = "<br/>".join(output)
-		return json.dumps(output)
+		return json.dumps(response)
 
 
 if __name__ == '__main__':
